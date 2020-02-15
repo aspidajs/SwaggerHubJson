@@ -27,7 +27,7 @@ const changeFunc = async (input: string | OpenAPI.Document, isYaml: boolean): Pr
 }
 
 const originalResultJson = JSON.parse(`${fs.readFileSync(targetJson,'utf8')}`)
-const resultJson = originalResultJson.data.slice(0,4)
+const resultJson = originalResultJson.data
 let resultData = []
 
 Promise.all(resultJson.map(async resultJsonData => {
