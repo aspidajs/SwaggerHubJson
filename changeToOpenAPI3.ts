@@ -27,19 +27,14 @@ const changeFunc = async (input: string | OpenAPI.Document, isYaml: boolean): Pr
 }
 
 const originalResultJson = JSON.parse(`${fs.readFileSync(targetJson,'utf8')}`)
-const resultJson = originalResultJson.data
+const resultJson = originalResultJson.data.slice(0,4)
 let resultData = []
 
-
-const makeResultList = async (result) => {
-  result.map(resultJsonData => {
-    const newJson = changeFunc(resultJsonData,true);
-    resultData.push(newJson);
-  })
-
+Promise.all(resultJson.map(async resultJsonData => {
+  const newJson = await changeFunc(resultJsonData,true);
+  resultData.push(newJson);
+})).then(()=>{
   fs.writeFile(`new_${targetJson}`, JSON.stringify({data:resultData}), (error) => {
     if (error) console.log('Error',error)
   })
-}
-
-makeResultList(resultJson);
+})
