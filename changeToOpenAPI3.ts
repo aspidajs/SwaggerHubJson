@@ -13,12 +13,16 @@ const changeFunc = async (input: string | OpenAPI.Document, isYaml: boolean): Pr
 const targetJson = 'result_500.json'
 
 const originalResultJson = JSON.parse(`${fs.readFileSync(targetJson,'utf8')}`)
-const resultJson = originalResultJson.data
+const resultJson = originalResultJson.data.slice(0,4)
+
+if(!fs.existsSync('swaggerHubJsonFiles')){
+  fs.mkdirSync('swaggerHubJsonFiles')
+}
 
 resultJson.map(async resultJsonData => {
   const newJson = await changeFunc(resultJsonData,true);
   const serversHashed = crypto.createHash('sha256').update(`${newJson.servers}`,'utf8').digest('hex')
-  fs.writeFile(`${serversHashed}.json`, JSON.stringify(newJson), (error) => {
+  fs.writeFile(`swaggerHubJsonFiles/${serversHashed}.json`, JSON.stringify(newJson), (error) => {
     if (error) console.log('Error',error)
   })
 })
