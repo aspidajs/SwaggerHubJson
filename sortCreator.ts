@@ -49,7 +49,8 @@ Promise.all(
         const includeSwaggerMockServer = (arr: OpenAPIV3.ServerObject[]) => {
           const checkStrings = [
             'virtserver.swaggerhub.com',
-            'petstore.swagger.io'
+            'petstore.swagger.io',
+            '://0.0.0.0'
           ]
           return arr.some( obj =>
             checkStrings.filter(str => obj.url.includes(str)).length > 0
