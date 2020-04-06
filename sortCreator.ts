@@ -46,13 +46,23 @@ Promise.all(
           )
           return originalJson.servers.length > 0 ? !hasLocalhost(arr) : false
         }
+        const includeSwaggerMockServer = (arr: OpenAPIV3.ServerObject[]) => {
+          const checkStrings = [
+            'virtserver.swaggerhub.com',
+            'petstore.swagger.io'
+          ]
+          return arr.some( obj =>
+            checkStrings.filter(str => obj.url.includes(str)).length > 0
+          )
+        }
 
         const result =
           obj.paths &&
           obj.info.title &&
           typeof obj.info.title === 'string' &&
           !obj.info.title.includes('Swagger Petstore') &&
-          checkServers(obj.servers)
+          checkServers(obj.servers) &&
+          !includeSwaggerMockServer(obj.servers)
 
         return result
       }
