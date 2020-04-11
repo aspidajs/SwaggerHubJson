@@ -1,5 +1,7 @@
 import * as fs from 'fs'
 import { OpenAPIV3 } from 'openapi-types'
+import SwaggerParser from 'swagger-parser'
+
 
 const fileNames = fs.readdirSync('./openApiSpec3')
 const fileNamesParts = fileNames.slice(1,10000)
@@ -49,7 +51,8 @@ Promise.all(
             'virtserver.swaggerhub.com',
             'petstore.swagger.io',
             '//0.0.0.0',
-            '//127.0.0.1'
+            '//127.0.0.1',
+            'https://$(catalog.host)/api/e2e-fasttrack/e2e-fasttrack-business/rest'
           ]
           return arr.some( obj =>
             checkStrings.filter(str => obj.url.includes(str)).length > 0 ||
