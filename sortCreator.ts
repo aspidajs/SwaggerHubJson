@@ -15,9 +15,9 @@ type Api = {
   apiServiceId: string
   title: string
   baseURL: OpenAPIV3.ServerObject[]
-  discription: string
+  discription?: string
   category: string[]
-  updated: string
+  updated?: string
   icon: string
 }
 
@@ -29,9 +29,7 @@ Promise.all(
         "apiServiceId": "uLyMVe4XHi",
         "title": "test1 API", // title
         "baseURL": [],  // 調査依頼
-        "discription": "", // discription
         "category": ["SNS", "example2", "example3"], // 検討対象外
-        "updated": "", // 今回は対象外。api-typesのリポジトリの更新日時を取ってくる
         "icon": "/default.png" // 対象外。デフォルトを埋め込む
       };
       const originalJson: OpenAPIV3.Document = JSON.parse(`${fs.readFileSync(`openApiSpec3/${fileName}`,'utf8')}`)
@@ -46,13 +44,27 @@ Promise.all(
           )
           return originalJson.servers.length > 0 ? !hasLocalhost(arr) : false
         }
+        const includeDummyServer = (arr: OpenAPIV3.ServerObject[]) => {
+          const checkStrings = [
+            'virtserver.swaggerhub.com',
+            'petstore.swagger.io',
+            '//0.0.0.0',
+            '//127.0.0.1'
+          ]
+          return arr.some( obj =>
+            checkStrings.filter(str => obj.url.includes(str)).length > 0 ||
+            !obj.url.startsWith('http') ||
+            obj.url.length < 9
+          )
+        }
 
         const result =
           obj.paths &&
           obj.info.title &&
           typeof obj.info.title === 'string' &&
           !obj.info.title.includes('Swagger Petstore') &&
-          checkServers(obj.servers)
+          checkServers(obj.servers) &&
+          !includeDummyServer(obj.servers)
 
         return result
       }
@@ -72,7 +84,14 @@ Promise.all(
     }
   })
 ).then(() => {
-  fs.writeFile(`apilist.json`, JSON.stringify(resultArray), (error) => {
+  const sortedResultArray = [...resultArray].sort(
+    (a: Api, b: Api) => {
+      const aTitle = a.title.split(' ').join('').toLowerCase()
+      const bTitle = b.title.split(' ').join('').toLowerCase()
+      return aTitle > bTitle ? 1 : -1
+    }
+  )
+  fs.writeFile(`apilist.json`, JSON.stringify(sortedResultArray), (error) => {
     if (error) console.log('Error1')
   })
   fs.writeFile(`errFile.json`, JSON.stringify(errFiles), (error) => {
