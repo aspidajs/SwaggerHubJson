@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import { OpenAPIV3 } from "openapi-types";
-// import SwaggerParser from 'swagger-parser'
 
 const fileNames = fs.readdirSync("./openApiSpec3");
 const fileNamesParts = fileNames.slice(1, 10000);
