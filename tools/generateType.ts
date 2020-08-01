@@ -7,9 +7,13 @@ const resultJson = originalResultJson.data[0];
 
 const generateType = async () => {
   const newResultJson = await buildTemplate(resultJson, false, false, false);
-  fs.writeFile(`result.json`, JSON.stringify(newResultJson), (error) => {
-    if (error) console.log("Error", error);
-  });
+  fs.writeFile(
+    `@api-types/hoge/result.json`,
+    JSON.stringify(newResultJson),
+    (error) => {
+      if (error) console.log("Error", error);
+    }
+  );
 };
 
 generateType();
